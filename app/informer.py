@@ -8,7 +8,6 @@ import logging
 import build_database
 import sqlalchemy as db
 from datetime import datetime, timedelta
-from random import randrange
 from telethon import utils
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import IntegrityError, InterfaceError, ProgrammingError
@@ -20,6 +19,7 @@ from telethon.tl.functions.channels import  JoinChannelRequest
 from telethon.tl.functions.messages import ImportChatInviteRequest
 from oauth2client.service_account import ServiceAccountCredentials
 from models import Account, Channel, ChatUser, Keyword, Message, Monitor, Notification
+import secrets
 
 
 banner = """
@@ -381,7 +381,7 @@ class TGInformer:
                 logging.info(f"{sys._getframe().f_code.co_name}: Joining channel: {channel['channel_id']} => {channel['channel_name']}")
                 try:
                     await self.client(JoinChannelRequest(channel=await self.client.get_entity(channel['channel_url'])))
-                    sec = randrange(self.MIN_CHANNEL_JOIN_WAIT, self.MAX_CHANNEL_JOIN_WAIT)
+                    sec = secrets.SystemRandom().randrange(self.MIN_CHANNEL_JOIN_WAIT, self.MAX_CHANNEL_JOIN_WAIT)
                     logging.info(f'sleeping for {sec} seconds')
                     await asyncio.sleep(sec)
                 except FloodWaitError as e:
@@ -411,7 +411,7 @@ class TGInformer:
                     # ----------------------
                     # Counter FloodWaitError
                     # ----------------------
-                    sec = randrange(self.MIN_CHANNEL_JOIN_WAIT, self.MAX_CHANNEL_JOIN_WAIT)
+                    sec = secrets.SystemRandom().randrange(self.MIN_CHANNEL_JOIN_WAIT, self.MAX_CHANNEL_JOIN_WAIT)
                     logging.info(f'sleeping for {sec} seconds')
                     await asyncio.sleep(sec)
                 except FloodWaitError as e:
